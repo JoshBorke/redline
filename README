@@ -1,0 +1,21 @@
+This project is heavily based off of django-budget from http://code.google.com/p/django-budget/
+I modified it to add graphs and accounts but the guts mostly came from that project.  I use openflashchart2 (http://teethgrinder.co.uk/open-flash-chart-2/) to handle all of the graphing with pyofc2 to generate the graph elements.
+
+TODO:
+* (Re) implement budgeting
+** Merge Budget and BudgetEstimates classes
+* Make transaction importing smarter, less manual
+* Make transaction importing look prettier, integrated
+* allow importing to be done from the accounts page instead of its own page
+* Make graphs resizable
+* Use stacked bar charts for the accounts combined month view
+* Add the ability to change years on the graph
+* Add the ability to change months on the graph
+* Add the ability to have sub-categories
+* Add the ability to sort transactions - DONE
+* Add a "total balance in checking"
+* Modifying a transaction on the account list view should go back to the account list view
+* Implement reminders for accounts for due dates
+
+Future features:
+* Implement ofx (www.ofxhome.com)
