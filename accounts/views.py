@@ -130,10 +130,11 @@ def parse_ofx_file(f, account_id):
             minute += 1
             second = 0
         trans['DTPOSTED'] = datetime(year, month, day, hour, minute, second)
-
+        # make the transaction amount always positive, should this always be
+        # the case?
+        trans['TRNAMT'] = str(abs(float(trans['TRNAMT'])))
         if trans['TRNTYPE'] == 'DEBIT':
             type = 'expense'
-            trans['TRNAMT'] = str(-1 * float(trans['TRNAMT']))
         elif trans['TRNTYPE'] == 'CREDIT':
             type = 'income'
         try:
