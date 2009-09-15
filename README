@@ -15,7 +15,7 @@ TODO:
 * Add the ability to sort transactions - DONE
 * Add a "total balance in checking"
 * Modifying a transaction on the account list view should go back to the account list view
-* Implement reminders for accounts for due dates - DONE
+* Implement reminders for accounts for due dates - Viewable, no email yet
 
 Future features:
 * Implement ofx (www.ofxhome.com) - Can now import
