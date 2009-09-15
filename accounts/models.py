@@ -1,31 +1,6 @@
 from django.db import models
-#from reminders.models import Reminder
+from redline.categories.models import StandardMetadata, ActiveManager
 import datetime
-
-# Create your models here.
-class StandardMetadata(models.Model):
-    """
-    A basic (abstract) model for metadata.
-    """
-    created = models.DateTimeField(default=datetime.datetime.now)
-    updated = models.DateTimeField(default=datetime.datetime.now)
-    is_deleted = models.BooleanField(default=False, db_index=True)
-
-    class Meta:
-        abstract = True
-
-    def save(self, *args, **kwargs):
-        self.updated = datetime.datetime.now()
-        super(StandardMetadata, self).save(*args, **kwargs)
-
-    def delete(self):
-        self.is_deleted = True
-        self.save()
-
-
-class ActiveManager(models.Manager):
-    def get_query_set(self):
-        return super(ActiveManager, self).get_query_set().filter(is_deleted=False)
 
 class AccountType(StandardMetadata):
     """
@@ -50,7 +25,6 @@ class Account(StandardMetadata):
     slug = models.SlugField(unique=True)
     description = models.CharField(max_length=255)
     account_type = models.ForeignKey(AccountType)
-    # For later due = models.ForeignKey(Reminder)
     due = models.DateField()
 
     objects = models.Manager()
