@@ -1,6 +1,8 @@
 This project is heavily based off of django-budget from http://code.google.com/p/django-budget/
 I modified it to add graphs and accounts but the guts mostly came from that project.  I use openflashchart2 (http://teethgrinder.co.uk/open-flash-chart-2/) to handle all of the graphing with pyofc2 to generate the graph elements.
 
+This project has been developed to run on a personal server and the securing of data is left up to the developer.  Do NOT run this on a publicly accessible website.
+
 TODO:
 * (Re) implement budgeting - DONE
 ** Merge Budget and BudgetEstimates classes - DONE
