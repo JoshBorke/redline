@@ -76,8 +76,10 @@ def lookup_category(description):
     """
     lookups = CategoryLookup.objects.all()
     for cat in lookups:
-        regex = re.compile(cat.regex)
-        m = regex.match(str(description))
+        # ignore case
+        regex = re.compile(cat.regex, re.I)
+        # search the entire string
+        m = regex.search(str(description))
         if m:
             return cat.category
     return None
