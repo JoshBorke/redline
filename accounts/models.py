@@ -99,6 +99,13 @@ class Account(StandardMetadata):
                                hideFromGraph=True
                            )
 
+    def get_transaction_amounts(self, tStart, tEnd, type):
+        from transactions.models import Transaction
+        amount = 0
+        for trans in self.get_transactions(tStart, tEnd, type):
+            amount += trans.amount
+        return amount
+
     def get_transactions_by_cat(self, tStart, tEnd, type, cat):
         from transactions.models import Transaction
         amount = 0
@@ -115,6 +122,13 @@ class Account(StandardMetadata):
                            ).exclude(
                                hideFromGraph=True
                            )
+
+    def get_transactions_by_cat_amounts(self, tStart, tEnd, type, cat):
+        from transactions.models import Transaction
+        amount = 0
+        for trans in self.get_transactions_by_cat(tStart, tEnd, type, cat):
+            amount += trans.amount
+        return amount
 
     def get_next_due(self):
         from dateutil.rrule import *

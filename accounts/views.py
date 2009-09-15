@@ -294,7 +294,7 @@ def account_list(request, model_class=Account, template_name='accounts/list.html
         'chart_data': str(chart),
     }, context_instance=RequestContext(request))
 
-def account_info(request, account_id, model_class=Account, template_name='accounts/info.html'):
+def account_info(request, account_id, model_class=Account, template_name='accounts/list.html'):
     """
     The account information page displays a graph with the transactions for an
         entire year
@@ -311,18 +311,20 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
     income.width = 2
     income.color = "00FF00"
     v = []
+    transactions = []
+    maxAmount = 0
     for month in range(1, 11):
-        amount = 0
         tStart = date(year, month, 1)
         tEnd = date(year, month + 1, 1)
-        for transaction in account.get_transactions(tStart, tEnd, 'income'):
-            amount += transaction.amount
+        amount = account.get_transaction_amounts(tStart, tEnd, 'income')
+        transactions.extend(account.get_transactions(tStart, tEnd, 'income'))
         v.append(float(amount))
+        maxAmount = max(maxAmount, amount)
     tStart = date(year, 12, 1)
     tEnd = date(year + 1, 1, 1)
-    amount = 0
-    for transaction in account.get_transactions(tStart, tEnd, 'income'):
-        amount += transaction.amount
+    amount = account.get_transaction_amounts(tStart, tEnd, 'income')
+    transactions.extend(account.get_transactions(tStart, tEnd, 'income'))
+    maxAmount = max(maxAmount, amount)
     v.append(float(amount))
     income.values = v
     income.dot_style = mydot
@@ -337,14 +339,15 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
         amount = 0
         tStart = date(year, month, 1)
         tEnd = date(year, month + 1, 1)
-        for transaction in account.get_transactions(tStart, tEnd, 'expense'):
-            amount += transaction.amount
+        amount = account.get_transaction_amounts(tStart, tEnd, 'expense')
+        transactions.extend(account.get_transactions(tStart, tEnd, 'expense'))
+        maxAmount = max(maxAmount, amount)
         v.append(float(amount))
     tStart = date(year, 12, 1)
     tEnd = date(year + 1, 1, 1)
-    amount = 0
-    for transaction in account.get_transactions(tStart, tEnd, 'expense'):
-        amount += transaction.amount
+    amount = account.get_transaction_amounts(tStart, tEnd, 'expense')
+    maxAmount = max(maxAmount, amount)
+    transactions.extend(account.get_transactions(tStart, tEnd, 'expense'))
     v.append(float(amount))
     expense.values = v
     x = x_axis()
@@ -353,7 +356,7 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
     labels.labels = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     x.labels = labels
     y = y_axis()
-    y.min, y.max = 0, max(v)
+    y.min, y.max = 0, float(maxAmount)
     chart = open_flash_chart()
     chart.title = title(text=str(account.name))
     chart.add_element(income)
@@ -364,6 +367,7 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
         'account': account,
         'chart_data': str(chart),
         'year': year,
+        'transactions': transactions,
     }, context_instance=RequestContext(request))
 
 # todo: make this barstack
@@ -382,9 +386,8 @@ def accounts_detail(request, month, year, model_class=Account, template_name='ac
     tStart = date(int(year), int(month), 1)
     tEnd = date(int(year), int(month) + 1, 1)
     for account in account_list:
-        for transaction in account.get_transactions(tStart, tEnd, 'income'):
-            amount += transaction.amount
-            transactions.append(transaction)
+        amount += account.get_transaction_amounts(tStart, tEnd, 'income')
+        transactions.extend(account.get_transactions(tStart, tEnd, 'income'))
     value = barvalue()
     value.colour = "#00FF00"
     value.top = float(amount)
@@ -392,9 +395,8 @@ def accounts_detail(request, month, year, model_class=Account, template_name='ac
     v.append(value)
     amount = 0
     for account in account_list:
-        for transaction in account.get_transactions(tStart, tEnd, 'expense'):
-            amount += transaction.amount
-            transactions.append(transaction)
+        amount += account.get_transaction_amounts(tStart, tEnd, 'expense')
+        transactions.extend(account.get_transactions(tStart, tEnd, 'expense'))
     value = barvalue()
     value.colour = "#FF0000"
     value.top = float(amount)
@@ -429,31 +431,30 @@ def account_detail(request, account_id, month, year, model_class=Account, templa
     details.on_click = 'on_click'
     v = []
     transactions = []
-    amount = 0
     tStart = date(int(year), int(month), 1)
     tEnd = date(int(year), int(month) + 1, 1)
-    for transaction in account.get_transactions(tStart, tEnd, 'income'):
-        amount += transaction.amount
-        transactions.append(transaction)
+    amount = account.get_transaction_amounts(tStart, tEnd, 'income')
+    transactions.extend(account.get_transaction(tStart, tEnd, 'income'))
     value = barvalue()
     value.colour = "#00FF00"
     value.top = float(amount)
     v.append(value)
+    maxAmount = amount
     amount = 0
-    for transaction in account.get_transactions(tStart, tEnd, 'expense'):
-        amount += transaction.amount
-        transactions.append(transaction)
+    amount = account.get_transaction_amounts(tStart, tEnd, 'expense')
+    transactions.extend(account.get_transaction(tStart, tEnd, 'expense'))
     value = barvalue()
     value.colour = "#FF0000"
     value.top = float(amount)
     v.append(value)
+    maxAmount = max(maxAmount, amount)
     details.values = v
     x = x_axis()
     labels = x_axis_labels()
     labels.labels = ["Income", "Expenses"]
     x.labels = labels
     y = y_axis()
-    y.min, y.max = 0, max(v)
+    y.min, y.max = 0, float(maxAmount)
     chart = open_flash_chart()
     chart.title = title(text=str(account.name))
     chart.add_element(details)
@@ -538,15 +539,14 @@ def account_detail_type(request, account_id, month, year, ttype, model_class=Acc
         ttype = "expense"
     for cat in Category.active.all():
         if (not cat.hideFromGraph):
-            amount = 0
-            for transaction in account.get_transactions_by_cat(tStart, tEnd, ttype, cat):
-                amount += transaction.amount
-                transactions.append(transaction)
+            amount = account.get_transactions_by_cat_amounts(tStart, tEnd, ttype, cat)
+            transactions.extend(account.get_transactions_by_cat(tStart, tEnd, ttype, cat))
             value = pie_value(value=float(amount))
             value.tip = str(cat) + ': $#val#'
             value.label = str(cat)
             value.amount = float(amount)
             v.append(value)
+    #amount = account.get_transactions_by_cat_amounts(tStart, tEnd, ttype, None)
     amount = 0
     for transaction in account.get_transactions(tStart, tEnd, ttype):
         if (transaction.category == None):
