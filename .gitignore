@@ -3,3 +3,5 @@
 dbfile
 media
 templates
+media/*
+templates/*
