@@ -132,11 +132,14 @@ def parse_ofx_file(f, account_id):
         trans['DTPOSTED'] = datetime(year, month, day, hour, minute, second)
         # make the transaction amount always positive, should this always be
         # the case?
-        trans['TRNAMT'] = str(abs(float(trans['TRNAMT'])))
+        trans['TRNAMT'] = float(trans['TRNAMT'])
         if trans['TRNTYPE'] == 'DEBIT':
             type = 'expense'
         elif trans['TRNTYPE'] == 'CREDIT':
             type = 'income'
+            if trans['TRNAMT'] < 0:
+                type='expense'
+        trans['TRNAMT'] = str(abs(trans['TRNAMT']))
         try:
             dupe_in_db = Transaction.objects.get(account = account,
                                                  notes = trans['NAME'],
