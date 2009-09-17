@@ -229,6 +229,7 @@ def account_list(request, model_class=Account, template_name='accounts/list.html
     mydot.on_click = "monthClicked"
     income.width = 2
     income.color = "00FF00"
+    income.text = "Income"
     v = []
     t = []
     for month in range(1, 11):
@@ -250,12 +251,11 @@ def account_list(request, model_class=Account, template_name='accounts/list.html
     t.append(float(amount))
     income.values = v
     income.dot_style = mydot
-    income.dot_size = mydot
     expense = line()
     expense.dot_style = mydot
-    expense.dot_size = mydot
     expense.width = 2
     expense.color = "FF0000"
+    expense.text = "Expenses"
     v = []
     for month in range(1, 11):
         amount = 0
@@ -328,7 +328,7 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
     v.append(float(amount))
     income.values = v
     income.dot_style = mydot
-    income.dot_size = mydot
+    income.text = "Income"
     expense = line()
     expense.dot_style = mydot
     expense.dot_size = mydot
@@ -350,6 +350,7 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
     transactions.extend(account.get_transactions(tStart, tEnd, 'expense'))
     v.append(float(amount))
     expense.values = v
+    expense.text = "Expenses"
     x = x_axis()
     x.min, x.max, x.steps = 1, 12, 1
     labels = x_axis_labels()
