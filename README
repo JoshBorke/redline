@@ -18,6 +18,7 @@ TODO:
 * Add a "total balance in checking"
 * Modifying a transaction on the account list view should go back to the account list view
 * Implement reminders for accounts for due dates - Viewable, no email yet
+* Make transactions editable in the datatable
 
 Future features:
 * Implement ofx (www.ofxhome.com) - Can now import
