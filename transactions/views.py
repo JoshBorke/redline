@@ -74,6 +74,32 @@ def transaction_edit(request, transaction_id, model_class=Transaction, form_clas
         'form': form,
     }, context_instance=RequestContext(request))
 
+def transaction_ajax_edit_amount(request, model_class=Transaction):
+    """
+    Edits a transaction object from an ajax call.
+    """
+    if request.POST:
+        id = request.POST.get('id')
+        value = request.POST.get('value')
+        transaction_id, _, field = id.partition('-')
+        transaction = get_object_or_404(model_class.active.all(), pk=transaction_id)
+        transaction.amount = value
+        transaction.save()
+        return HttpResponse('$' + str(value))
+
+def transaction_ajax_edit_type(request, model_class=Transaction):
+    """
+    Edits a transaction object from an ajax call.
+    """
+    if request.POST:
+        id = request.POST.get('id')
+        value = request.POST.get('value')
+        transaction_id, _, field = id.partition('-')
+        transaction = get_object_or_404(model_class.active.all(), pk=transaction_id)
+        transaction.transaction_type = value
+        transaction.save()
+        return HttpResponse(value)
+
 
 def transaction_delete(request, transaction_id, model_class=Transaction, template_name='transactions/delete.html'):
     """
