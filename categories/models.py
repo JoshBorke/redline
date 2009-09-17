@@ -62,9 +62,9 @@ class CategoryLookup(models.Model):
 
     def applyToTransactions(self):
         from redline.transactions.models import Transaction
-        reg = re.compile(self.regex)
+        reg = re.compile(self.regex, re.I)
         for transaction in Transaction.active.all().filter(category=None):
-            m = reg.match(str(transaction.notes))
+            m = reg.search(str(transaction.notes))
             if m:
                 transaction.category = self.category
                 transaction.save()
