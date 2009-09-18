@@ -120,7 +120,7 @@ hbarfactory = ofc_factory('_hbar', ['type', 'values', 'color', 'colour', 'toolti
 hbar = lambda **kw: hbarfactory(type='hbar', **kw)
 hbar_value = ofc_factory('hbar_factory', ['left', 'right', 'tip'])
 
-barstackfactory = ofc_factory('_barstack', ['type', 'values', 'keys', 'tip', 'color', 'colours'])
+barstackfactory = ofc_factory('_barstack', ['type', 'values', 'keys', 'tip', 'color', 'colours', 'on_click'])
 bar_stack = lambda **kw: barstackfactory(type='bar_stack',**kw)
 
 area_linefactory = ofc_factory('_area_line', ['type', 'values', 'color', 'colour',
