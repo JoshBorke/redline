@@ -381,32 +381,39 @@ def accounts_detail(request, month, year, model_class=Account, template_name='ac
         entire year
     """
     account_list = model_class.active.all()
-    details = bar()
+    details = bar_stack()
     details.on_click = 'typeClicked'
+    colours = ["FF3399", "FF9900", "00FF00", "0000FF", "FF000", "990099", "FFFF33"]
+    details.colours = colours
     maxAmount = 0
     v = []
     transactions = []
+    income_values = []
+    keys = []
     amount = 0
+    i = 0
     tStart = date(int(year), int(month), 1)
     tEnd = date(int(year), int(month) + 1, 1)
     for account in account_list:
-        amount += account.get_transaction_amounts(tStart, tEnd, 'income')
+        value = account.get_transaction_amounts(tStart, tEnd, 'income')
+        amount += value
         transactions.extend(account.get_transactions(tStart, tEnd, 'income'))
-    value = barvalue()
-    value.colour = "#00FF00"
-    value.top = float(amount)
+        income_values.append(float(value))
+        keys.append({"text": str(account.name), "font-size": 13, "colour": colours[i]})
+        i += 1
     maxAmount = amount
-    v.append(value)
+    v.append(income_values)
     amount = 0
+    expense_values = []
     for account in account_list:
-        amount += account.get_transaction_amounts(tStart, tEnd, 'expense')
+        value = account.get_transaction_amounts(tStart, tEnd, 'expense')
+        amount += value
         transactions.extend(account.get_transactions(tStart, tEnd, 'expense'))
-    value = barvalue()
-    value.colour = "#FF0000"
-    value.top = float(amount)
+        expense_values.append(float(value))
     maxAmount = max(maxAmount, amount)
-    v.append(value)
+    v.append(expense_values)
     details.values = v
+    details.keys = keys
     x = x_axis()
     labels = x_axis_labels()
     labels.labels = ["Income", "Expenses"]
