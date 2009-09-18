@@ -65,7 +65,7 @@ def transaction_edit(request, transaction_id, model_class=Transaction, form_clas
         form = form_class(request.POST, instance=transaction)
 
         if form.is_valid():
-            category = form.save()
+            transaction = form.save()
             return HttpResponseRedirect(reverse('redline_transaction_list'))
     else:
         form = form_class(instance=transaction)
@@ -98,7 +98,20 @@ def transaction_ajax_edit_type(request, model_class=Transaction):
         transaction = get_object_or_404(model_class.active.all(), pk=transaction_id)
         transaction.transaction_type = value
         transaction.save()
-        return HttpResponse(value)
+        return HttpResponse(transaction.transaction_type)
+
+def transaction_ajax_edit_category(request, model_class=Transaction):
+    """
+    Edits a transaction object from an ajax call.
+    """
+    if request.POST:
+        id = request.POST.get('id')
+        value = request.POST.get('value')
+        transaction = get_object_or_404(model_class.active.all(), pk=id)
+        cat = get_object_or_404(Category.active.all(), slug=value)
+        transaction.category = cat
+        transaction.save()
+        return HttpResponse(cat.name)
 
 
 def transaction_delete(request, transaction_id, model_class=Transaction, template_name='transactions/delete.html'):
