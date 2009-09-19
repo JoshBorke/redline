@@ -26,6 +26,7 @@ class Account(StandardMetadata):
     description = models.CharField(max_length=255)
     account_type = models.ForeignKey(AccountType)
     due = models.DateField()
+    #website = models.URLField()
 
     objects = models.Manager()
     active = ActiveManager()
