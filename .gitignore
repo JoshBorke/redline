@@ -1,7 +1,6 @@
 *.pyc
 *.pyo
+settings.py
 dbfile
 media
-templates
 media/*
-templates/*
