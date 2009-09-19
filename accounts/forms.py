@@ -6,8 +6,7 @@ from redline.accounts.models import Account, AccountType
 class AccountForm(forms.ModelForm):
     class Meta:
         model = Account
-        fields = ('account_type', 'name', 'description', 'due')
-        #fields = ('account_type', 'name', 'description', 'website', 'due')
+        fields = ('account_type', 'name', 'description', 'website', 'due')
 
     def save(self):
         if not self.instance.slug:

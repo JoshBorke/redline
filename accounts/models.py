@@ -23,10 +23,10 @@ class Account(StandardMetadata):
     """
     name = models.CharField(max_length=128)
     slug = models.SlugField(unique=True)
-    description = models.CharField(max_length=255)
+    description = models.CharField(max_length=255, blank=True)
     account_type = models.ForeignKey(AccountType)
     due = models.DateField()
-    #website = models.URLField()
+    website = models.URLField()
 
     objects = models.Manager()
     active = ActiveManager()
