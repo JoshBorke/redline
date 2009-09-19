@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load budget %}
+
+{% block page_title %}Month Summary For {{ start_date|date:"F Y" }}{% endblock %}
+
+{% block content %}
+    <h2>Month Summary For {{ start_date|date:"F Y" }}</h2>
+    
+    <h3>{{ budget.name }}</h3>
+    
+    <table class="report_table">
+        <thead>
+            <tr>
+                <th>Category</th>
+                <th class="numeric">Estimated Total</th>
+                <th class="numeric">Actual Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if budgets %}
+                {% for budget in budgets %}
+                    {% budget_month_summary %}
+                {% endfor %}
+            {% else %}
+                <p>
+                    It looks like there haven't been any transactions, so there's 
+                    nothing to show here.
+                </p>
+            {% endif %}
+        </tbody>
+    </table>
+{% endblock %}

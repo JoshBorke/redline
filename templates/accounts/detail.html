@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Account Details{% endblock %}
+
+{% block content %}
+
+
+<script type="text/javascript">
+
+
+function on_click(id ) {
+  <!--alert('ID ' + id + ' clicked')-->
+  window.location="/accounts/info/{{ account.id }}/{{ year }}/{{ month }}/" + id;
+}
+
+function ofc_ready()
+{
+    <!--alert('ofc_ready');-->
+}
+
+function open_flash_chart_data()
+{
+    <!--alert('open_flash_chart_data');-->
+    return JSON.stringify(data);
+}
+
+function findSWF(movieName) {
+  if (navigator.appName.indexOf("Microsoft")!= -1) {
+    return window[movieName];
+  } else {
+    return document[movieName];
+  }
+}
+
+var data = {{ chart_data|safe }}
+
+</script>
+    <h2>Account Info</h2>
+
+    <div id="chart_resize" style="width:400px height:200px padding: 10px">
+    <div id="my_chart"></div>
+    </div><div id="resize_info">stuff</div>
+
+    <table class="report_table" id="table_info">
+        <thead>
+            <tr>
+                <th>Notes</th>
+                <th>Category</th>
+                <th>Type</th>
+                <th class="numeric">Date</th>
+                <th class="numeric">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if transactions %}
+                {% for transaction in transactions %}
+                    {% if transaction and transaction.id %}
+                        <tr class="{% cycle odd,even %}">
+                            <td><a href="{% url redline_transaction_edit transaction.id %}">{{ transaction.notes }}</a></td>
+                            <td>{{ transaction.category }}</td>
+                            <td>{{ transaction.get_transaction_type_display }}</td>
+                            <td class="numeric">{{ transaction.date|date:"m/d/Y" }}</td>
+                            <td class="numeric">${{ transaction.amount|stringformat:".02f" }}</td>
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4">No transactions found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+
+
+{% endblock %}

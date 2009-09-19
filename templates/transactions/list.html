@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Transaction List{% endblock %}
+
+{% block content %}
+
+    <h2>Transaction List</h2>
+    
+    <p>
+        <a href="{% url redline_transaction_add %}">Add A Transaction</a>
+    </p>
+    
+    
+    <table class="report_table" id="table_info">
+        {% include "transactions/table.html" %}
+    </table>
+    
+{% endblock %}

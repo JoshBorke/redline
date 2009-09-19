@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Budget List{% endblock %}
+
+{% block content %}
+    <h2>Budget List</h2>
+    
+    <p>
+        <a href="{% url budget_add %}">Add A Budget</a>
+    </p>
+    
+    
+    <table class="report_table">
+        <thead>
+            <tr>
+                <th>Budget</th>
+                <th>Estimate</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if budgets %}
+                {% for budget in budgets %}
+                    <tr class="{% cycle odd,even %}">
+                        <td>{{ budget.name }}</td>
+                        <td>${{ budget.amount }}</td>
+                        <td><a href="{% url budget_edit budget.slug %}">Edit Budget</a></td>
+                        <td><a href="{% url budget_summary budget.slug %}">Budget History</a></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No budgets found.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+    
+    {% include 'budget/pagination.html' %}
+{% endblock %}

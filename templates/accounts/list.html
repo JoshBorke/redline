@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Account List{% endblock %}
+
+{% block content %}
+<script type="text/javascript">
+
+
+function monthClicked(id ) {
+  id = id + 1
+  <!--alert('Month ' + id + ' clicked in year: ' + {{ year }});-->
+  window.location="/finances/accounts/overview/{{ year }}/" + id;
+}
+
+function typeClicked(id ) {
+  <!--alert('Month ' + id + ' clicked in year: ' + {{ year }});-->
+  window.location="/finances/accounts/overview/{{ year }}/{{ month }}/" + id;
+}
+
+function ofc_ready()
+{
+    <!--alert('ofc_ready');-->
+}
+
+function open_flash_chart_data()
+{
+    <!--alert('open_flash_chart_data');-->
+    return JSON.stringify(data);
+}
+
+function findSWF(movieName) {
+  if (navigator.appName.indexOf("Microsoft")!= -1) {
+    return window[movieName];
+  } else {
+    return document[movieName];
+  }
+}
+
+var data = {{ chart_data|safe }}
+
+</script>
+    <h2>Account List</h2>
+
+    <div id="chart_resize" style="width:400px height:300 padding: 15px">
+        <div id="my_chart"></div>
+    </div>
+    <!-- hidden for now <div id="resize_info">stuff</div>-->
+    <a href="{% url account_add %}">Add an account</a>
+    <table class="report_table" id="table_info">
+        {% if transactions %}
+            {% include "transactions/table.html" %}
+        {% else %}
+            <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Due</th>
+                        <th class="numeric">Income</th>
+                        <th class="numeric">Expense</th>
+                        <th>&nbsp;</th>
+                        <th>&nbsp;</th>
+                    </tr>
+            </thead>
+            <tbody>
+                {% if accounts %}
+                    {% for account in accounts %}
+                        <tr class="{% cycle odd,even %}">
+                            <td><a href="{% url account_info account.id %}">{{ account.name }}</a></td>
+                            <td>{{ account.account_type }}</td>
+                            <td>{{ account.get_next_due }}</td>
+                            <td class="numeric">${{ account.get_income }}</td>
+                            <td class="numeric">${{ account.get_expense }}</td>
+                            <td><a href="{% url account_edit account.id %}">Edit</a></td>
+                            <td><a href="{% url account_import account.id %}">Import</a></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4">No accounts found.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        {% endif %}
+    </table>
+
+{% endblock %}

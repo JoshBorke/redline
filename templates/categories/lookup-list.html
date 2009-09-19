@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Lookup List{% endblock %}
+
+{% block content %}
+    <h2>Lookup List</h2>
+    <p>
+    </p>
+    <table class="report_table">
+        <thead>
+            <tr>
+                <th>Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if lookups %}
+                {% for lookup in lookups %}
+                    <tr class="{% cycle odd,even %}">
+                        <td>{{ lookup }} <a href="{% url categoryLookup_edit lookup.id %}">edit</a></td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>No lookups found.</td>
+                </tr>
+            {% endif %}
+            <tr>
+               <a href="{% url categoryLookup_add %}">Add another lookup</a>
+            </tr>
+        </tbody>
+    </table>
+    {% include 'pagination.html' %}
+{% endblock %}

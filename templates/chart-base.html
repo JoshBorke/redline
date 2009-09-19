@@ -1,0 +1,49 @@
+<head>
+
+<script type="text/javascript" src="{{ MEDIA_URL}}js/json/json2.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL}}js/swfobject.js"></script>
+<script type="text/javascript">
+swfobject.embedSWF("{{ MEDIA_URL}}open-flash-chart.swf", "my_chart", "350", "200", "9.0.0");
+</script>
+
+<script type="text/javascript">
+
+function ofc_ready()
+{
+    <!--alert('ofc_ready');-->
+}
+
+function open_flash_chart_data()
+{
+    return JSON.stringify(data);
+}
+
+function findSWF(movieName) {
+  if (navigator.appName.indexOf("Microsoft")!= -1) {
+    return window[movieName];
+  } else {
+    return document[movieName];
+  }
+}
+
+function pie_slice_clicked( index )
+{
+alert( 'Pie Slice '+ index +' clicked');
+}
+    
+var data = {{ chart_data|safe }}
+
+</script>
+
+
+</head>
+<body>
+
+<p>Hello World</p>
+
+
+<div id="my_chart"></div>
+     
+
+</body>
+</html>

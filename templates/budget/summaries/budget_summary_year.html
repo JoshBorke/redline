@@ -1,0 +1,28 @@
+{% load budget %}
+<tr class="{% cycle odd,even %}">
+    <td>
+        {{ budget.name }}
+        
+        {% if transactions %}
+            <a href="#" id="id_hide_show_{{ budget.slug }}" class="hide_show_button">[+]</a>
+        
+            <table id="id_hidden_transaction_list_{{ budget.slug }}" class="transaction_table">
+                <tbody>
+                {% for trans in transactions %}
+                    <tr>
+                        <td class="wide">{{ trans.notes }}</td>
+                        <td>{{ trans.date|date:"m/d/Y" }}</td>
+                        <td class="numeric">
+                            ${{ trans.amount|stringformat:".02f" }}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </td>
+    <td class="numeric">${{ budget.yearly_estimated_amount|stringformat:".02f" }}</td>
+    <td class="numeric">
+        <span class="{% colorize_amount budget.yearly_estimated_amount actual_amount %}">${{ actual_amount|stringformat:".02f" }}</span>
+    </td>
+</tr>

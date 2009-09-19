@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Account Import{% endblock %}
+
+{% block content %}
+
+{% if form %}
+	{% if form.errors %}
+	<p>{{ form.errors }}</p>
+	{% endif %}
+	<form enctype="multipart/form-data" action="." method="POST">
+	{{ form }}
+	<input type="submit" value="Upload" />
+	</form>
+{% else %}
+	{% if info %}
+		<p>{{ info|safe }}</p>
+	{% else %}
+		<p>No transactions processed.</p>
+	{% endif %}
+{% endif %}
+
+{% endblock %}
