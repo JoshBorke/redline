@@ -21,18 +21,18 @@
 	<script>$(document).ready(function() {
 		{% if transactions %}
 			{% load category %}
-			$('.edit').editable( 'edit/ajax/amount/', { 
+			$('.edit').editable( '{% url transaction_ajax_amount %}', { 
 				"callback" : function( sValue, y ) {
 				var aPos = oTable.fnGetPosition( this );
 				oTable.fnUpdate( sValue, aPos[0], aPos[1] );
 			}
 			});
-			$('.type').editable( 'edit/ajax/type/', {
+			$('.type').editable( '{% url transaction_ajax_type %}', {
 				data   : " {'expense': 'Expense', 'income': 'Income'} ",
 				type   : 'select',
 				submit : 'OK'
 			});
-			$('.category').editable( 'edit/ajax/category/', {
+			$('.category').editable( '{% url transaction_ajax_category %}', {
 				data   : " {% categories %} ",
 				type   : 'select',
 				submit : 'OK'
