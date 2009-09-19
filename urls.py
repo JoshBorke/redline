@@ -11,22 +11,22 @@ urlpatterns = patterns('',
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs'
     # to INSTALLED_APPS to enable admin documentation:
-    (r'^admin/doc/', include('django.contrib.admindocs.urls')),
+    (r'^finances/admin/doc/', include('django.contrib.admindocs.urls')),
 
     # Uncomment the next line to enable the admin:
-    (r'^admin/(.*)', admin.site.root),
+    (r'^finances/admin/(.*)', admin.site.root),
 
-    (r'^$', include('redline.budgets.urls')),
+    (r'^finances/$', include('redline.budgets.urls')),
 
     # accounts
-    (r'^accounts/', include('redline.accounts.urls')),
+    (r'^finances/accounts/', include('redline.accounts.urls')),
     # categories
-    (r'^category/', include('redline.categories.urls')),
+    (r'^finances/category/', include('redline.categories.urls')),
     # transactions
-    (r'^transactions/', include('redline.transactions.urls')),
+    (r'^finances/transactions/', include('redline.transactions.urls')),
 
     # budgets
-    (r'^budget/', include('redline.budgets.urls')),
+    (r'^finances/budget/', include('redline.budgets.urls')),
 )
 if settings.DEBUG:
     urlpatterns += patterns('',
