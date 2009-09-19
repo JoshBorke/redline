@@ -20,7 +20,7 @@ def category_list(request, model_class=Category, template_name='categories/list.
         page
             current page of category objects
     """
-    category_list = model_class.active.all()
+    category_list = model_class.active.order_by('name')
     try:
         paginator = Paginator(category_list, getattr(settings, 'LIST_PER_PAGE', 50))
         page = paginator.page(request.GET.get('page', 1))
