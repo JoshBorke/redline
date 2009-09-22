@@ -62,9 +62,9 @@ class CategoryLookup(models.Model):
 
     def applyToTransactions(self):
         from redline.transactions.models import Transaction
-        reg = re.compile(self.regex, re.I)
+        reg = re.compile(self.regex.strip(), re.I)
         for transaction in Transaction.active.all().filter(category=None):
-            m = reg.search(str(transaction.notes))
+            m = reg.search(str(transaction.notes).strip())
             if m:
                 transaction.category = self.category
                 transaction.save()
@@ -77,9 +77,9 @@ def lookup_category(description):
     lookups = CategoryLookup.objects.all()
     for cat in lookups:
         # ignore case
-        regex = re.compile(cat.regex, re.I)
+        regex = re.compile(cat.regex.strip(), re.I)
         # search the entire string
-        m = regex.search(str(description))
+        m = regex.search(str(description.strip()))
         if m:
             return cat.category
     return None
