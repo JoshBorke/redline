@@ -2,6 +2,10 @@ from django.db import models
 from redline.categories.models import StandardMetadata, ActiveManager
 import datetime
 
+class GraphedManager(models.Manager):
+    def get_query_set(self):
+        return super(GraphedManager, self).get_query_set().filter(hideFromGraph=False)
+
 class AccountType(StandardMetadata):
     """
     AccountType is the type of account
@@ -30,6 +34,7 @@ class Account(StandardMetadata):
 
     objects = models.Manager()
     active = ActiveManager()
+    graphed = GraphedManager()
 
     class Meta:
         verbose_name_plural = 'Accounts'
@@ -40,14 +45,14 @@ class Account(StandardMetadata):
     def get_income(self):
         from transactions.models import Transaction
         income = 0
-        for transaction in Transaction.objects.filter(account=self).filter(transaction_type='income'):
+        for transaction in Transaction.expenses.filter(account=self):
             income += float(transaction.amount)
         return income
 
     def get_expense(self):
         from transactions.models import Transaction
         expense = 0
-        for transaction in Transaction.objects.filter(account=self).filter(transaction_type='expense'):
+        for transaction in Transaction.incomes.filter(account=self):
             expense += float(transaction.amount)
         return expense
 
@@ -132,8 +137,8 @@ class Account(StandardMetadata):
         return amount
 
     def get_next_due(self):
-        from dateutil.rrule import *
-        from datetime import *
+        from dateutil.rrule import rrule, MONTHLY
+        from datetime import datetime
         rr = rrule(MONTHLY, dtstart=self.due)
         today = datetime.today()
         return rr.after(today).date()
