@@ -30,12 +30,20 @@
 			$('.type').editable( '{% url transaction_ajax_type %}', {
 				data   : " {'expense': 'Expense', 'income': 'Income'} ",
 				type   : 'select',
-				submit : 'OK'
+				submit : 'OK',
+				"callback" : function( sValue, y ) {
+				var aPos = oTable.fnGetPosition( this );
+				oTable.fnUpdate( sValue, aPos[0], aPos[1] );
+			}
 			});
 			$('.category').editable( '{% url transaction_ajax_category %}', {
 				data   : " {% categories %} ",
 				type   : 'select',
-				submit : 'OK'
+				submit : 'OK',
+				"callback" : function( sValue, y ) {
+				var aPos = oTable.fnGetPosition( this );
+				oTable.fnUpdate( sValue, aPos[0], aPos[1] );
+			}
 			});
 		{% endif %}
 
