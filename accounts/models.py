@@ -29,7 +29,7 @@ class Account(StandardMetadata):
     slug = models.SlugField(unique=True)
     description = models.CharField(max_length=255, blank=True)
     account_type = models.ForeignKey(AccountType)
-    due = models.DateField()
+    due = models.DateField(default=datetime.datetime.today)
     website = models.URLField()
 
     objects = models.Manager()
