@@ -119,6 +119,8 @@ def parse_ofx_file(f, account_id):
             found = False
 
     for trans in transactions:
+        # default to expenses
+        type = 'expense'
         datestr = trans['DTPOSTED']
         year = int(datestr[0:4])
         month = int(datestr[4:6])
@@ -134,6 +136,8 @@ def parse_ofx_file(f, account_id):
         # the case?
         trans['TRNAMT'] = float(trans['TRNAMT'])
         if trans['TRNTYPE'] == 'DEBIT':
+            type = 'expense'
+        elif trans['TRNTYPE'] == 'PAYMENT':
             type = 'expense'
         elif trans['TRNTYPE'] == 'CREDIT':
             type = 'income'
