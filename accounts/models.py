@@ -29,7 +29,6 @@ class Account(StandardMetadata):
     slug = models.SlugField(unique=True)
     description = models.CharField(max_length=255, blank=True)
     account_type = models.ForeignKey(AccountType)
-    due = models.DateField(default=datetime.datetime.today)
     website = models.URLField()
 
     objects = models.Manager()
@@ -136,9 +135,47 @@ class Account(StandardMetadata):
             amount += trans.amount
         return amount
 
+class CheckingAccount(Account):
+    """
+    A checking account has a running balance, an optional minimum balance.
+    """
+    runningBalance = models.DecimalField(max_digits=11, decimal_places=2)
+
+class SavingsAccount(Account):
+    """
+    A savings account has a running balance.
+    """
+    runningBalance = models.DecimalField(max_digits=11, decimal_places=2)
+
+class LoanAccount(Account):
+    """
+    A loan account has a running balance, a due date, and minimum payment
+    amount.
+    """
+    runningBalance = models.DecimalField(max_digits=11, decimal_places=2)
+    due = models.DateField(default=datetime.datetime.today)
     def get_next_due(self):
         from dateutil.rrule import rrule, MONTHLY
         from datetime import datetime
         rr = rrule(MONTHLY, dtstart=self.due)
         today = datetime.today()
         return rr.after(today).date()
+
+
+class CreditCardAccount(Account):
+    """
+    A credit card account has a balance, credit available, total credit, credit
+    used.
+    """
+    balance = models.DecimalField(max_digits=11, decimal_places=2)
+    creditAvailable = models.DecimalField(max_digits=11, decimal_places=2)
+    totalCredit = models.DecimalField(max_digits=11, decimal_places=2)
+    creditUsed = models.DecimalField(max_digits=11, decimal_places=2)
+    due = models.DateField(default=datetime.datetime.today)
+    def get_next_due(self):
+        from dateutil.rrule import rrule, MONTHLY
+        from datetime import datetime
+        rr = rrule(MONTHLY, dtstart=self.due)
+        today = datetime.today()
+        return rr.after(today).date()
+
