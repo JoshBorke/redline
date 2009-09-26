@@ -7,7 +7,7 @@
     <h2>Dashboard</h2>
     
     <div id="budget_progress_bar">
-        <h3>This Month's Usage</h3>
+	<h3>Summary for this month: {% now "F Y" %}</h3>
         
         {% if budgets %}
             {% for budget in budgets %}
