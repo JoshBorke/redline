@@ -67,7 +67,7 @@ class CategoryLookup(models.Model):
             m = reg.search(str(transaction.notes).strip())
             if m:
                 transaction.category = self.category
-                transaction.hideFromGraph = category.hideFromGraph
+                transaction.hideFromGraph = self.category.hideFromGraph
                 transaction.save()
 
 def lookup_category(description):
