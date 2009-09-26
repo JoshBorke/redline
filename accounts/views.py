@@ -505,21 +505,23 @@ def accounts_detail_type(request, month, year, ttype, model_class=Account, templ
                 for transaction in account.get_transactions_by_cat(tStart, tEnd, ttype, cat):
                     amount += transaction.amount
                     transactions.append(transaction)
-            value = pie_value(value=float(amount))
-            value.tip = str(cat) + ': $#val#'
-            value.label = str(cat)
-            value.amount = float(amount)
-            v.append(value)
+            if amount > 0:
+                value = pie_value(value=float(amount))
+                value.tip = str(cat) + ': $#val#'
+                value.label = str(cat)
+                value.amount = float(amount)
+                v.append(value)
     amount = 0
     for account in accounts:
         for transaction in account.get_transactions(tStart, tEnd, ttype):
             if (transaction.category == None):
                 amount += transaction.amount
                 transactions.append(transaction)
-    value = pie_value(value=float(amount))
-    value.tip = 'Misc: $#val#'
-    value.amount = float(amount)
-    v.append(value)
+    if amount > 0:
+        value = pie_value(value=float(amount))
+        value.tip = 'Misc: $#val#'
+        value.amount = float(amount)
+        v.append(value)
     details.values = v
     chart = open_flash_chart()
     chart.title = title(text=ttype + " Detail for " + month + "/" + year)
