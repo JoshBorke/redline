@@ -378,7 +378,6 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
         'transactions': transactions,
     }, context_instance=RequestContext(request))
 
-# todo: make this barstack
 def accounts_detail(request, month, year, model_class=Account, template_name='accounts/list.html'):
     """
     The account information page displays a graph with the transactions for an
