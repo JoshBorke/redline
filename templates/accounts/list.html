@@ -18,10 +18,25 @@ function accountMonthClicked(id ) {
   window.location="/finances/accounts/info/{{ account.id }}/{{ year }}/" + id;
 }
 
+function on_click(id ) {
+  <!--alert('ID ' + id + ' clicked')-->
+  window.location="/finances/accounts/info/{{ account.id }}/{{ year }}/{{ month }}/" + id;
+}
+
 function typeClicked(id ) {
   <!--alert('Month ' + id + ' clicked in year: ' + {{ year }});-->
   window.location="/finances/accounts/overview/{{ year }}/{{ month }}/" + id;
 }
+
+function pieClicked(id) {
+  alert("Pie clicked: " + id)
+}
+
+{% if javaFuncs %}
+  {% for func in javaFuncs %}
+    {{ func|safe }}
+  {% endfor %}
+{% endif %}
 
 function ofc_ready()
 {

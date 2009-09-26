@@ -212,7 +212,7 @@ def account_import(request, account_id):
         form = UploadFileForm()
     return render_to_response('accounts/upload.html', {'form': form})
 
-def account_list(request, model_class=Account, template_name='accounts/list.html'):
+def accounts_list(request, model_class=Account, template_name='accounts/list.html'):
     """
     A list of account_type objects.
 
@@ -434,7 +434,115 @@ def accounts_detail(request, month, year, model_class=Account, template_name='ac
         'month': month,
     }, context_instance=RequestContext(request))
 
-def account_detail(request, account_id, month, year, model_class=Account, template_name='accounts/detail.html'):
+def accounts_detail_type(request, month, year, ttype, model_class=Account, template_name='accounts/list.html'):
+    """
+    The account information page displays a graph with the transactions for an
+        entire year
+    """
+    accounts = model_class.active.all()
+    details = pie()
+    colours = ["FF3399", "FF9900", "00FF00", "0000FF", "FF000", "990099", "FFFF33"]
+    details.colours = colours
+    v = []
+    transactions = []
+    javaFuncs = []
+    tStart = date(int(year), int(month), 1)
+    tEnd = date(int(year), int(month) + 1, 1)
+    if (int(ttype) == 0):
+        type = "income"
+    else:
+        type = "expense"
+    for cat in Category.active.all():
+        if (not cat.hideFromGraph):
+            func = 'function %sClicked()\n{\n\twindow.location="/finances/accounts/overview/%d/%d/%d/%s/";\n}' % (str(cat.slug), int(year), int(month), int(ttype), cat.slug)
+            javaFuncs.append(str(func))
+            amount = 0
+            for account in accounts:
+                for transaction in account.get_transactions_by_cat(tStart, tEnd, type, cat):
+                    amount += transaction.amount
+                    transactions.append(transaction)
+            if amount > 0:
+                value = pie_value(value=float(amount))
+                value.tip = str(cat) + ': $#val#'
+                value.label = str(cat)
+                value.amount = float(amount)
+                value.on_click = str(cat.slug) + 'Clicked'
+                v.append(value)
+    amount = 0
+    for account in accounts:
+        for transaction in account.get_transactions(tStart, tEnd, type):
+            if (transaction.category == None):
+                amount += transaction.amount
+                transactions.append(transaction)
+    if amount > 0:
+        value = pie_value(value=float(amount))
+        value.tip = 'Misc: $#val#'
+        value.amount = float(amount)
+        v.append(value)
+    details.values = v
+    details.on_click = "pieClicked"
+    chart = open_flash_chart()
+    chart.title = title(text=ttype + " Detail for " + month + "/" + year)
+    chart.add_element(details)
+    return render_to_response(template_name, {
+        'chart_data': str(chart),
+        'month': month,
+        'year': year,
+        'type': ttype,
+        'transactions': transactions,
+        'javaFuncs': javaFuncs,
+    }, context_instance=RequestContext(request))
+
+def accounts_category_detail(request, month, year, ttype, slug):
+    """
+    The account category detail page returns all the transactions for a
+    particular month, transaction type, and category slug.
+    """
+    details = pie()
+    colours = ["FF3399", "FF9900", "00FF00", "0000FF", "FF000", "990099", "FFFF33"]
+    details.colours = colours
+    v = []
+    tStart = date(int(year), int(month), 1)
+    tEnd = date(int(year), int(month) + 1, 1)
+    category = get_object_or_404(Category.active.all(), slug=slug)
+    if (int(ttype) == 0):
+        ttype = "income"
+        transactions = Transaction.incomes.filter(
+                                date__gte=tStart
+                            ).exclude(
+                                date__gte=tEnd # except before tEnd
+                            ).filter(
+                                category=category
+                            )
+    else:
+        ttype = "expense"
+        transactions = Transaction.expenses.filter(
+                                date__gte=tStart
+                            ).exclude(
+                                date__gte=tEnd # except before tEnd
+                            ).filter(
+                                category=category
+                            )
+    for transaction in transactions:
+        amount = transaction.amount
+        if amount > 0:
+            value = pie_value(value=float(amount))
+            #value.tip = str(transaction.notes) + ': $#val#'
+            #value.label = str(transaction.notes)
+            value.amount = float(amount)
+            v.append(value)
+    details.values = v
+    chart = open_flash_chart()
+    chart.title = title(text=str(category.name))
+    chart.add_element(details)
+    return render_to_response('accounts/list.html', {
+        'chart_data': str(chart),
+        'month': month,
+        'year': year,
+        'transactions': transactions,
+    }, context_instance=RequestContext(request))
+
+def account_detail(request, account_id, month, year, model_class=Account, template_name='accounts/list.html'):
     """
     The account information page displays a graph with the transactions for an
         entire year
@@ -481,61 +589,7 @@ def account_detail(request, account_id, month, year, model_class=Account, templa
         'transactions': transactions,
     }, context_instance=RequestContext(request))
 
-def accounts_detail_type(request, month, year, ttype, model_class=Account, template_name='accounts/list.html'):
-    """
-    The account information page displays a graph with the transactions for an
-        entire year
-    """
-    accounts = model_class.active.all()
-    details = pie()
-    colours = ["FF3399", "FF9900", "00FF00", "0000FF", "FF000", "990099", "FFFF33"]
-    details.colours = colours
-    v = []
-    transactions = []
-    tStart = date(int(year), int(month), 1)
-    tEnd = date(int(year), int(month) + 1, 1)
-    if (int(ttype) == 0):
-        ttype = "income"
-    else:
-        ttype = "expense"
-    for cat in Category.active.all():
-        if (not cat.hideFromGraph):
-            amount = 0
-            for account in accounts:
-                for transaction in account.get_transactions_by_cat(tStart, tEnd, ttype, cat):
-                    amount += transaction.amount
-                    transactions.append(transaction)
-            if amount > 0:
-                value = pie_value(value=float(amount))
-                value.tip = str(cat) + ': $#val#'
-                value.label = str(cat)
-                value.amount = float(amount)
-                v.append(value)
-    amount = 0
-    for account in accounts:
-        for transaction in account.get_transactions(tStart, tEnd, ttype):
-            if (transaction.category == None):
-                amount += transaction.amount
-                transactions.append(transaction)
-    if amount > 0:
-        value = pie_value(value=float(amount))
-        value.tip = 'Misc: $#val#'
-        value.amount = float(amount)
-        v.append(value)
-    details.values = v
-    chart = open_flash_chart()
-    chart.title = title(text=ttype + " Detail for " + month + "/" + year)
-    chart.add_element(details)
-    return render_to_response(template_name, {
-        'account': account,
-        'chart_data': str(chart),
-        'month': month,
-        'year': year,
-        'type': ttype,
-        'transactions': transactions,
-    }, context_instance=RequestContext(request))
-
-def account_detail_type(request, account_id, month, year, ttype, model_class=Account, template_name='accounts/detail.html'):
+def account_detail_type(request, account_id, month, year, ttype, model_class=Account, template_name='accounts/list.html'):
     """
     The account information page displays a graph with the transactions for an
         entire year
@@ -546,31 +600,77 @@ def account_detail_type(request, account_id, month, year, ttype, model_class=Acc
     details.colours = colours
     v = []
     transactions = []
+    javaFuncs = []
+    tStart = date(int(year), int(month), 1)
+    tEnd = date(int(year), int(month) + 1, 1)
+    if (int(ttype) == 0):
+        type = "income"
+    else:
+        type = "expense"
+    for cat in Category.active.all():
+        if (not cat.hideFromGraph):
+            func = 'function %sClicked()\n{\n\twindow.location="/finances/accounts/overview/%d/%d/%d/%s/";\n}' % (str(cat.slug), int(year), int(month), int(ttype), cat.slug)
+            javaFuncs.append(str(func))
+            amount = account.get_transactions_by_cat_amounts(tStart, tEnd, type, cat)
+            transactions.extend(account.get_transactions_by_cat(tStart, tEnd, type, cat))
+            if amount > 0:
+                value = pie_value(value=float(amount))
+                value.tip = str(cat) + ': $#val#'
+                value.label = str(cat)
+                value.amount = float(amount)
+                value.on_click = str(cat.slug) + 'Clicked'
+                v.append(value)
+    #amount = account.get_transactions_by_cat_amounts(tStart, tEnd, ttype, None)
+    amount = 0
+    for transaction in account.get_transactions(tStart, tEnd, type):
+        if (transaction.category == None):
+            amount += transaction.amount
+            transactions.append(transaction)
+    if amount > 0:
+        value = pie_value(value=float(amount))
+        value.tip = 'Misc: $#val#'
+        value.amount = float(amount)
+        v.append(value)
+    details.values = v
+    details.on_click = "pieClicked"
+    chart = open_flash_chart()
+    chart.title = title(text=str(account.name))
+    chart.add_element(details)
+    return render_to_response(template_name, {
+        'account': account,
+        'chart_data': str(chart),
+        'month': month,
+        'year': year,
+        'transactions': transactions,
+        'javaFuncs': javaFuncs,
+    }, context_instance=RequestContext(request))
+
+def account_category_detail(request, account_id, month, year, ttype, slug):
+    """
+    The account category detail page returns all the transactions for a
+    particular month, transaction type, and category slug.
+    """
+    account = get_object_or_404(Account.active.all(), pk=account_id)
+    details = pie()
+    colours = ["FF3399", "FF9900", "00FF00", "0000FF", "FF000", "990099", "FFFF33"]
+    details.colours = colours
+    v = []
     tStart = date(int(year), int(month), 1)
     tEnd = date(int(year), int(month) + 1, 1)
     if (int(ttype) == 0):
         ttype = "income"
     else:
         ttype = "expense"
-    for cat in Category.active.all():
-        if (not cat.hideFromGraph):
-            amount = account.get_transactions_by_cat_amounts(tStart, tEnd, ttype, cat)
-            transactions.extend(account.get_transactions_by_cat(tStart, tEnd, ttype, cat))
+    category = get_object_or_404(model_class.active.all(), slug=slug)
+    transactions = account.get_transactions_by_cat(tStart, tEnd, ttype, category)
+    for transaction in transactions:
+        amount = transaction.amount
+        if amount > 0:
             value = pie_value(value=float(amount))
-            value.tip = str(cat) + ': $#val#'
-            value.label = str(cat)
+            value.tip = str(transaction.notes) + ': $#val#'
+            value.label = str(transaction.notes)
             value.amount = float(amount)
             v.append(value)
-    #amount = account.get_transactions_by_cat_amounts(tStart, tEnd, ttype, None)
-    amount = 0
-    for transaction in account.get_transactions(tStart, tEnd, ttype):
-        if (transaction.category == None):
-            amount += transaction.amount
-            transactions.append(transaction)
-    value = pie_value(value=float(amount))
-    value.tip = 'Misc: $#val#'
-    value.amount = float(amount)
-    v.append(value)
     details.values = v
     chart = open_flash_chart()
     chart.title = title(text=str(account.name))
