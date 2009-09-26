@@ -16,8 +16,8 @@
                         <td class="type" id={{ transaction.id }}>{{ transaction.get_transaction_type_display }}</td>
                         <td class="category" id={{ transaction.id }}>{{ transaction.category }}</td>
                         <td class="account" id={{ transaction.id }}>{{ transaction.account.name }}</td>
-                        <td id={{ transaction.id }}-date class="date">{{ transaction.date|date:"m/d/Y" }}</td>
-                        <td class="edit" id={{ transaction.id }}-amount class="numeric">${{ transaction.amount|stringformat:".02f" }}</td>
+                        <td id={{ transaction.id }}-date class="date" style="width:10%">{{ transaction.date|date:"m/d/Y" }}</td>
+                        <td class="edit" id={{ transaction.id }}-amount class="numeric" style="width:10%">${{ transaction.amount|stringformat:".02f" }}</td>
                     </tr>
                 {% endfor %}
             {% else %}
