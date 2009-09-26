@@ -148,9 +148,9 @@ def data_overview(request):
     plot.set_gradient_fill(True)
     income = 0
     expense = 0
-    for transaction in Transaction.objects.filter(transaction_type='income'):
+    for transaction in Transaction.active.filter(transaction_type='income'):
         income += float(transaction.amount)
-    for transaction in Transaction.objects.filter(transaction_type='expense'):
+    for transaction in Transaction.active.filter(transaction_type='expense'):
         expense += float(transaction.amount)
     piece = pie_value(income, tooltip="Income")
     piece.set_on_click('http://localhost:8000/data/transactions/income/')
@@ -175,9 +175,9 @@ def data_expense_or_income(request, t_type):
     plot = Pie(start_angle = 35, animate = True)
     plot.set_tooltip("#val# of #total#<br>#percent# of 100%")
     plot.set_gradient_fill(True)
-    for cat in Category.objects.all():
+    for cat in Category.active.all():
         aggregate = 0
-        for transaction in Transaction.objects.filter(transaction_type=t_type).filter(category=cat):
+        for transaction in Transaction.active.filter(transaction_type=t_type).filter(category=cat):
             aggregate += float(transaction.amount)
         if (aggregate != 0):
             plot.append_values(aggregate)
@@ -194,9 +194,9 @@ def chart_test(request):
     plot.set_gradient_fill(True)
     income = 0
     expense = 0
-    for transaction in Transaction.objects.filter(transaction_type='income'):
+    for transaction in Transaction.active.filter(transaction_type='income'):
         income += float(transaction.amount)
-    for transaction in Transaction.objects.filter(transaction_type='expense'):
+    for transaction in Transaction.active.filter(transaction_type='expense'):
         expense += float(transaction.amount)
     piece = pie_value(income, tooltip="Income")
     piece.set_on_click('http://localhost:8000/data/transactions/income/')
