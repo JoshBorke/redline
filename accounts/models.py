@@ -61,7 +61,7 @@ class Account(StandardMetadata):
         income = 0
         tStart = date(year, month, 1)
         tEnd = date(year, month + 1, 1)
-        for transaction in Transaction.objects.filter(
+        for transaction in Transaction.active.filter(
                                             account=self
                                         ).filter(
                                             transaction_type='income'
@@ -78,7 +78,7 @@ class Account(StandardMetadata):
         expense = 0
         tStart = date(year, month, 1)
         tEnd = date(year, month + 1, 1)
-        for transaction in Transaction.objects.filter(
+        for transaction in Transaction.active.filter(
                                             account=self
                                         ).filter(
                                             transaction_type='expense'
@@ -93,7 +93,7 @@ class Account(StandardMetadata):
     def get_transactions(self, tStart, tEnd, type):
         from transactions.models import Transaction
         amount = 0
-        return Transaction.objects.filter(
+        return Transaction.active.filter(
                                account=self # filter only transactions on this account
                            ).filter(
                                transaction_type=type # of the specified type
@@ -115,7 +115,7 @@ class Account(StandardMetadata):
     def get_transactions_by_cat(self, tStart, tEnd, type, cat):
         from transactions.models import Transaction
         amount = 0
-        return Transaction.objects.filter(
+        return Transaction.active.filter(
                                account=self # filter only transactions on this account
                            ).filter(
                                transaction_type=type # of the specified type
