@@ -19,6 +19,7 @@ TODO:
 * Modifying a transaction on the account list view should go back to the account list view
 * Implement reminders for accounts for due dates - Viewable, no email yet
 * Make transactions editable in the datatable - DONE
+* When viewing a pie graph, make a click on a category show only those transactions.
 
 Future features:
 * Implement ofx (www.ofxhome.com) - Can now import
