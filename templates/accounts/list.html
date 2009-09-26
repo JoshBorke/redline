@@ -12,6 +12,12 @@ function monthClicked(id ) {
   window.location="/finances/accounts/overview/{{ year }}/" + id;
 }
 
+function accountMonthClicked(id ) {
+  id = id + 1
+  <!--alert('Month ' + id + ' clicked in year: ' + {{ year }});-->
+  window.location="/finances/accounts/info/{{ account.id }}/{{ year }}/" + id;
+}
+
 function typeClicked(id ) {
   <!--alert('Month ' + id + ' clicked in year: ' + {{ year }});-->
   window.location="/finances/accounts/overview/{{ year }}/{{ month }}/" + id;

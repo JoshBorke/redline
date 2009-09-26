@@ -312,9 +312,8 @@ def account_info(request, account_id, model_class=Account, template_name='accoun
     income = line()
     mydot = dot()
     mydot.dot_size = 5
-    mydot.style = 'hollow'
     mydot.halosize = 5
-    mydot.on_click = "monthClicked"
+    mydot.on_click = "accountMonthClicked"
     income.width = 2
     income.color = "00FF00"
     v = []
@@ -448,7 +447,7 @@ def account_detail(request, account_id, month, year, model_class=Account, templa
     tStart = date(int(year), int(month), 1)
     tEnd = date(int(year), int(month) + 1, 1)
     amount = account.get_transaction_amounts(tStart, tEnd, 'income')
-    transactions.extend(account.get_transaction(tStart, tEnd, 'income'))
+    transactions.extend(account.get_transactions(tStart, tEnd, 'income'))
     value = barvalue()
     value.colour = "#00FF00"
     value.top = float(amount)
@@ -456,7 +455,7 @@ def account_detail(request, account_id, month, year, model_class=Account, templa
     maxAmount = amount
     amount = 0
     amount = account.get_transaction_amounts(tStart, tEnd, 'expense')
-    transactions.extend(account.get_transaction(tStart, tEnd, 'expense'))
+    transactions.extend(account.get_transactions(tStart, tEnd, 'expense'))
     value = barvalue()
     value.colour = "#FF0000"
     value.top = float(amount)
