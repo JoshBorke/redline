@@ -239,7 +239,7 @@ def accounts_list(request, model_class=Account, template_name='accounts/list.htm
     income.text = "Income"
     v = []
     t = []
-    for month in range(1, 11):
+    for month in range(1, 12):
         amount = 0
         tStart = date(year, month, 1)
         tEnd = date(year, month + 1, 1)
@@ -264,7 +264,7 @@ def accounts_list(request, model_class=Account, template_name='accounts/list.htm
     expense.color = "FF0000"
     expense.text = "Expenses"
     v = []
-    for month in range(1, 11):
+    for month in range(1, 12):
         amount = 0
         tStart = date(year, month, 1)
         tEnd = date(year, month + 1, 1)
