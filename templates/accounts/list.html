@@ -60,7 +60,18 @@ function findSWF(movieName) {
 var data = {{ chart_data|safe }}
 
 </script>
-    <h2>Account List</h2>
+    {% if accounts %}
+        <h2>Account List</h2>
+    {% else %}
+        <h2>Finances</h2>
+        {% if type %}
+            <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"-1" }}/{{ type }}">Previous Month</a>
+            <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"1" }}/{{ type }}">Next Month</a>
+        {% else %}
+            <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"-1" }}/">Previous Month</a>
+            <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"1" }}/">Next Month</a>
+        {% endif %}
+    {% endif %}
 
     <div id="chart_resize" style="width:400px height:300 padding: 15px">
         <div id="my_chart"></div>
