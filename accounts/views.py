@@ -446,8 +446,14 @@ def accounts_detail_type(request, month, year, ttype, model_class=Account, templ
     v = []
     transactions = []
     javaFuncs = []
-    tStart = date(int(year), int(month), 1)
-    tEnd = date(int(year), int(month) + 1, 1)
+    if int(month) > 12:
+        tStart = date(int(year) + 1, 1, 1)
+        tEnd = date(int(year) + 1, 2, 1)
+    elif int(month) == 12:
+        tEnd = date(int(year) + 1, 1, 1)
+    else:
+        tStart = date(int(year), int(month), 1)
+        tEnd = date(int(year), int(month) + 1, 1)
     if (int(ttype) == 0):
         type = "income"
     else:
