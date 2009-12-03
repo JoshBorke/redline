@@ -68,8 +68,10 @@ var data = {{ chart_data|safe }}
             <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"-1" }}/{{ type }}">Previous Month</a>
             <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"1" }}/{{ type }}">Next Month</a>
         {% else %}
-            <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"-1" }}/">Previous Month</a>
-            <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"1" }}/">Next Month</a>
+            {% if month %}
+                <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"-1" }}/">Previous Month</a>
+                <a href="/finances/accounts/overview/{{ year }}/{{ month|add:"1" }}/">Next Month</a>
+            {% endif %}
         {% endif %}
     {% endif %}
 
