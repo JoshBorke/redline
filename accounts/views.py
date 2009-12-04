@@ -394,8 +394,15 @@ def accounts_detail(request, month, year, model_class=Account, template_name='ac
     keys = []
     amount = 0
     i = 0
+    if int(month) > 12:
+        month = int(month) - 12
+        year = int(year) + 1
     tStart = date(int(year), int(month), 1)
-    tEnd = date(int(year), int(month) + 1, 1)
+    if int(month) == 12:
+        tEnd = date(int(year) + 1, 1, 1)
+    else:
+        tEnd = date(int(year), int(month) + 1, 1)
+    #tEnd = date(int(year), int(month) + 1, 1)
     for account in account_list:
         value = account.get_transaction_amounts(tStart, tEnd, 'income')
         amount += value
@@ -423,7 +430,7 @@ def accounts_detail(request, month, year, model_class=Account, template_name='ac
     y = y_axis()
     y.min, y.max = 0, float(maxAmount)
     chart = open_flash_chart()
-    chart.title = title(text="Detail for " + month + "/" + year)
+    chart.title = title(text="Detail for " + str(month) + "/" + str(year))
     chart.add_element(details)
     chart.x_axis = x
     chart.y_axis = y
@@ -450,6 +457,7 @@ def accounts_detail_type(request, month, year, ttype, model_class=Account, templ
         tStart = date(int(year) + 1, 1, 1)
         tEnd = date(int(year) + 1, 2, 1)
     elif int(month) == 12:
+        tStart = date(int(year), int(month), 1)
         tEnd = date(int(year) + 1, 1, 1)
     else:
         tStart = date(int(year), int(month), 1)
