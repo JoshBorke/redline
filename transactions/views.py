@@ -26,7 +26,6 @@ def transaction_list(request, model_class=Transaction, template_name='transactio
         'transactions': transaction_list,
     }, context_instance=RequestContext(request))
 
-
 def transaction_add(request, form_class=TransactionForm, template_name='transactions/add.html'):
     """
     Create a new transaction object.
@@ -47,7 +46,6 @@ def transaction_add(request, form_class=TransactionForm, template_name='transact
     return render_to_response(template_name, {
         'form': form,
     }, context_instance=RequestContext(request))
-
 
 def transaction_edit(request, transaction_id, model_class=Transaction, form_class=TransactionForm, template_name='transactions/edit.html'):
     """
@@ -112,7 +110,6 @@ def transaction_ajax_edit_category(request, model_class=Transaction):
         transaction.category = cat
         transaction.save()
         return HttpResponse(cat.name)
-
 
 def transaction_delete(request, transaction_id, model_class=Transaction, template_name='transactions/delete.html'):
     """
